@@ -1,18 +1,20 @@
 {
-  "Shopping.Client": {
+  "Shopping.API": {
     "commandName": "Project",
+    "dotnetRunMessages": "true",
     "launchBrowser": true,
+    "launchUrl": "swagger",
+    "applicationUrl": "http://localhost:5000",
     "environmentVariables": {
       "ASPNETCORE_ENVIRONMENT": "Development"
-    },
-    "applicationUrl": "http://localhost:5001",
-    "dotnetRunMessages": "true"
+    }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:19124",
+      "applicationUrl": "http://localhost:39990",
       "sslPort": 0
     }
   },
@@ -20,6 +22,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -27,7 +30,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true
     }
   }
