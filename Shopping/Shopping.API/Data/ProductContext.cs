@@ -1,10 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Shopping.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Shopping.API.Data
 {
@@ -15,13 +10,14 @@ namespace Shopping.API.Data
             var client = new MongoClient(configuration["DatabaseSettings:ConnectionString"]);
             var database = client.GetDatabase(configuration["DatabaseSettings:DatabaseName"]);
 
-            Products = database.GetCollection<Product>(configuration["DatabaseSettings:CollectionName"]);
-            SeedData(Products);
+            //Products = database.GetCollection<Product>(configuration["DatabaseSettings:CollectionName"]);
+            //SeedData(Products);
+            Products = GetPreconfiguredProducts();
         }
 
-        public IMongoCollection<Product> Products { get; }
+        public IEnumerable<Product> Products { get; }
 
-        private static void SeedData(IMongoCollection<Product> productCollection)
+        private void SeedData(IMongoCollection<Product> productCollection)
         {
             bool existProduct = productCollection.Find(p => true).Any();
             if (!existProduct)
@@ -30,7 +26,7 @@ namespace Shopping.API.Data
             }
         }
 
-        private static IEnumerable<Product> GetPreconfiguredProducts()
+        private  IEnumerable<Product> GetPreconfiguredProducts()
         {
             return new List<Product>()
             {

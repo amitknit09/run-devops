@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shoppingclient-deployment
+  labels:
+    app: shoppingclient
+spec:
+  selector:
+    matchLabels:
+      app: shoppingclient
+  template:
+    metadata:
+      labels:
+        app: shoppingclient
+    spec:
+      containers:
+        - name: shoppingclient
+          image: shoppingacr5487.azurecr.io/shoppingclient:v1
+          imagePullPolicy: IfNotPresent          
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "0.1"
+            limits:
+              memory: "128Mi"
+              cpu: "0.3"
+      imagePullSecrets:
+        - name: acr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shoppingclient
+spec:
+  type: LoadBalancer
+  selector:
+    app: shoppingclient
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

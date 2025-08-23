@@ -2,13 +2,12 @@
 using MongoDB.Driver;
 using Shopping.API.Data;
 using Shopping.API.Models;
-using System.Data.SqlTypes;
 
 namespace Shopping.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController 
+    public class ProductController
     {
         private readonly ProductContext _context;
         private readonly ILogger<ProductController> _logger;
@@ -20,9 +19,9 @@ namespace Shopping.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Product>> Get() 
+        public IEnumerable<Product> Get()
         {
-            return await _context.Products.Find(p=>true).ToListAsync();
+            return _context.Products;
         }
     }
 }
