@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: shoppingapi
-          image: shoppingacr5487.azurecr.io/shoppingapi:v1
+          image: shoppingacr5411.azurecr.io/shoppingapi:v1
           imagePullPolicy: IfNotPresent          
           ports:
             - containerPort: 8080
