@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: amitknitrundevops 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amitknitrundevops
+  template:
+    metadata:
+      labels:
+        app: amitknitrundevops 
+    spec:
+      containers:
+        - name: amitknitrundevops 
+          image: shoppingacr5411.azurecr.io/amitknitrundevops
+          ports:
+          - containerPort: 8080
