@@ -27,14 +27,14 @@ stages:
   - job: Build
     displayName: Build and Analyze
     pool:
-      vmImage: $(vmImageName)   # ✅ use Microsoft-hosted agent unless you must use self-hosted
+      name: Default   # ✅ use Microsoft-hosted agent unless you must use self-hosted
     steps:
     # --- SonarQube Prepare ---
     - task: SonarQubePrepare@5
       inputs:
         SonarQube: 'SonarQube-Server'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
-        projectKey: 'ShoppingService'               # <-- Update with your SonarQube project key
+        projectKey: 'ShoppingApp'               # <-- Update with your SonarQube project key
         projectName: 'Shopping Microservice'
 
     # --- Restore NuGet packages ---
@@ -83,7 +83,7 @@ stages:
   - deployment: Deploy
     displayName: Deploy to AKS
     pool:
-      vmImage: $(vmImageName)
+      name: Default
     environment: 'amitknit09rundevops.default'
     strategy:
       runOnce:
