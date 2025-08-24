@@ -69,7 +69,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        buildContext: $(Build.SourcesDirectory)   # ✅ root of repo; adjust if needed
+        buildContext: $(Build.SourcesDirectory)/Shopping   # ✅ root of repo; adjust if needed
         tags: |
           $(tag)
 
