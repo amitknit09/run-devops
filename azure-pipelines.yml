@@ -34,7 +34,7 @@ stages:
       inputs:
         SonarQube: 'SonarQube-Server'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
-        projectKey: 'ShoppingApp'               # <-- Update with your SonarQube project key
+        projectKey: 'ShoppingApp_ShoppingApp_aa1d6fd2'               # <-- Update with your SonarQube project key
         projectName: 'Shopping Microservice'
 
     # --- Restore NuGet packages ---
