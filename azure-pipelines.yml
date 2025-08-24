@@ -1,5 +1,5 @@
 # Deploy to Azure Kubernetes Service
-# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+# Build and push image to Azure Container Registry; Deploy to AKS
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
@@ -9,8 +9,7 @@ resources:
 - repo: self
 
 variables:
-
-  # Container registry service connection established during pipeline creation
+  # Container registry service connection
   dockerRegistryServiceConnection: '8b6a5708-a419-4c9b-b771-541c4b5ada84'
   imageRepository: 'amitknitrundevops'
   containerRegistry: 'shoppingacr5411.azurecr.io'
@@ -18,7 +17,7 @@ variables:
   tag: '$(Build.BuildId)'
   imagePullSecret: 'shoppingacr5411dcf1-auth'
 
-  # Agent VM image name
+  # Agent VM image
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -26,46 +25,54 @@ stages:
   displayName: Build stage
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Build and Analyze
     pool:
-      name: Default
+      vmImage: $(vmImageName)   # ✅ use Microsoft-hosted agent unless you must use self-hosted
     steps:
-    # 👉 SonarQube - Prepare
+    # --- SonarQube Prepare ---
     - task: SonarQubePrepare@5
       inputs:
-        SonarQube: 'MySonarQubeServiceConnection'   # <-- Service connection to SonarQube
+        SonarQube: 'MySonarQubeServiceConnection'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
-        projectKey: 'ShoppingService'               # <-- Replace with your project key
-        projectName: 'Shopping Microservice'        # <-- Replace with your project name
+        projectKey: 'ShoppingService'               # <-- Update with your SonarQube project key
+        projectName: 'Shopping Microservice'
 
-    # 👉 Build the .NET Core solution (required before analysis)
+    # --- Restore NuGet packages ---
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore .NET dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    # --- Build solution ---
     - task: DotNetCoreCLI@2
       displayName: 'Build .NET Core solution'
       inputs:
         command: 'build'
         projects: '**/*.csproj'
+        arguments: '--configuration Release'
 
-    # 👉 SonarQube - Analyze
+    # --- SonarQube Analyze ---
     - task: SonarQubeAnalyze@5
 
-    # 👉 SonarQube - Publish Results
+    # --- SonarQube Publish ---
     - task: SonarQubePublish@5
       inputs:
         pollingTimeoutSec: '300'
 
-    # Docker build & push
+    # --- Docker build & push ---
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build and push image to ACR
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        buildContext: $(Build.SourcesDirectory)/Shopping
+        buildContext: $(Build.SourcesDirectory)   # ✅ root of repo; adjust if needed
         tags: |
           $(tag)
 
-    - upload: manifests
+    - publish: manifests
       artifact: manifests
 
 - stage: Deploy
@@ -74,14 +81,15 @@ stages:
 
   jobs:
   - deployment: Deploy
-    displayName: Deploy
+    displayName: Deploy to AKS
     pool:
-      name: Default
+      vmImage: $(vmImageName)
     environment: 'amitknit09rundevops.default'
     strategy:
       runOnce:
         deploy:
           steps:
+          # --- Create imagePullSecret ---
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
@@ -89,11 +97,12 @@ stages:
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
+          # --- Deploy manifests ---
           - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
+            displayName: Deploy to AKS
             inputs:
               action: deploy
-              manifests: |                
+              manifests: |
                 $(Pipeline.Workspace)/manifests/shopping.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
