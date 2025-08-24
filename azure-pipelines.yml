@@ -32,7 +32,7 @@ stages:
     # --- SonarQube Prepare ---
     - task: SonarQubePrepare@5
       inputs:
-        SonarQube: 'MySonarQubeServiceConnection'   # <-- Update with your service connection
+        SonarQube: 'SonarQube-Server'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
         projectKey: 'ShoppingService'               # <-- Update with your SonarQube project key
         projectName: 'Shopping Microservice'
