@@ -31,12 +31,13 @@ stages:
     steps:
     # --- SonarQube Prepare ---
     - task: SonarQubePrepare@5
-      condition: eq(variables['Build.SourceBranchName'], 'main')
       inputs:
         SonarQube: 'SonarQube-Server'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
         projectKey: 'ShoppingApp_ShoppingApp_aa1d6fd2'               # <-- Update with your SonarQube project key
         projectName: 'Shopping Microservice'
+        extraProperties: |
+          sonar.branch.name=
 
     # --- Restore NuGet packages ---
     - task: DotNetCoreCLI@2
