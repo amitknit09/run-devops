@@ -31,6 +31,7 @@ stages:
     steps:
     # --- SonarQube Prepare ---
     - task: SonarQubePrepare@5
+      condition: eq(variables['Build.SourceBranchName'], 'main')
       inputs:
         SonarQube: 'SonarQube-Server'   # <-- Update with your service connection
         scannerMode: 'MSBuild'
